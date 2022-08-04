@@ -77,7 +77,7 @@ train
 test = df.iloc[1421:]
 test
 
-# Build Model
+# Build Model with specific parameters
 # model = ARIMA(train, order=(3,2,1))  
 model = sm.tsa.arima.ARIMA(train, order=(1, 1, 1))  
 fitted = model.fit()  
