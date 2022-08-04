@@ -71,7 +71,7 @@ def forecast(model,predict_steps,df):
     return (final_table)
     
 
-# Create Training and Test
+# Create Training and Tests
 train = df.iloc[:1421]
 train
 test = df.iloc[1421:]
