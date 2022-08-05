@@ -11,6 +11,8 @@ import numpy as np
 data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2022'))
 df = data['Close']
 df.sort_index(inplace=True)
+plt.ylabel('iShares 20+')
+plt.xlabel('Date')
 df.plot()
 plt.show()
 
