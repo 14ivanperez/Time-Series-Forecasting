@@ -1,3 +1,4 @@
+import itertools
 import yfinance as yf
 import investpy            
 import yahoo_fin.stock_info as si
@@ -43,9 +44,10 @@ df.sort_index(inplace=True)
 df = df.asfreq('d')
 df = df.fillna(method='bfill').fillna(method='ffill')
 df.sort_index(inplace=True)
-rcParams['figure.figsize'] = 18, 8
+rcParams['figure.figsize'] = 16, 6
 decomposition = sm.tsa.seasonal_decompose(df, model = 'additive')
 fig = decomposition.plot()
+plt.xlabel('Shares 20+ Year Treasury Bond')
 plt.show()
 
 # Create Training and Tests
@@ -62,26 +64,34 @@ plt.show()
 
 
 #Build Arima for train data
-df.index = pd.DatetimeIndex(df.index).to_period('D')
-
 mod = sm.tsa.arima.ARIMA(train, order=(1, 1, 2))
 model_fit = mod.fit()
 print(model_fit.summary())
 
-ARIMAmodel = ARIMA(train, order = (2, 2, 2))
-ARIMAmodel = ARIMAmodel.fit()
+import itertools
+warnings.filterwarnings("ignore")
+plt.style.use('fivethirtyeight')
+p = d = q = range(0, 2)
+pdq = list(itertools.product(p, d, q))
+seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
+print('Examples of parameter combinations for Seasonal ARIMA...')
+print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
+print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
+print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
+print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
-y_pred = ARIMAmodel.get_forecast(len(test.index))
-y_pred_df = y_pred.conf_int(alpha = 0.05) 
-y_pred_df["Predictions"] = ARIMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
-y_pred_df.index = test.index
-y_pred_out = y_pred_df["Predictions"] 
-plt.plot(y_pred_out, color='Yellow', label = 'Predictions')
-plt.legend()
+#Produce Arima model
+mod = sm.tsa.statespace.SARIMAX(df,
+                                order=(1, 1, 1),
+                                seasonal_order=(1, 1, 0, 12),
+                                enforce_stationarity=False,
+                                enforce_invertibility=False)
+results = mod.fit()
+print(results.summary().tables[1])
 
+results.plot_diagnostics(figsize=(16,6))
+plt.show()
 
-import numpy as np
-from sklearn.metrics import mean_squared_error
 
 arma_rmse = np.sqrt(mean_squared_error(test["BTC-USD"].values, y_pred_df["Predictions"]))
 print("RMSE: ",arma_rmse)
