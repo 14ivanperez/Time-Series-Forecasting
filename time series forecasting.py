@@ -26,6 +26,20 @@ ax.set_ylabel('iShares 20+ Prices')
 ax.legend()
 plt.show()
 
+#see decomposition
+from pylab import rcParams
+rcParams['figure.figsize'] = 18, 8
+decomposition = sm.tsa.seasonal_decompose(df, model='additive')
+fig = decomposition.plot()
+plt.show()
+
+df.index = pd.to_datetime(df.index)
+df = df.set_index('Date').asfreq('D')
+result = seasonal_decompose(topsoil, model='ad')
+
+from pylab import rcParams
+rcParams['figure.figsize'] = 12,5
+result.plot();
 
 #test non-stationarity
 from statsmodels.tsa.stattools import adfuller
@@ -40,8 +54,8 @@ sm.graphics.tsa.plot_pacf(df.values.squeeze(), lags=100)
 plt.show()
 
 # Create Training and Tests
-train = df[df.index < pd.to_datetime("2020-01-01", format='%Y-%m-%d')]
-test = df[df.index > pd.to_datetime("2020-01-01", format='%Y-%m-%d')]
+train = df[df.index < pd.to_datetime("2020-11-01", format='%Y-%m-%d')]
+test = df[df.index > pd.to_datetime("2020-11-01", format='%Y-%m-%d')]
 
 plt.plot(train, color = "black")
 plt.plot(test, color = "red")
@@ -54,11 +68,11 @@ plt.show()
 #Build Arima for train data
 df.index = pd.DatetimeIndex(df.index).to_period('D')
 
-mod = sm.tsa.arima.ARIMA(df, order=(1, 1, 2))
+mod = sm.tsa.arima.ARIMA(train, order=(1, 1, 2))
 model_fit = mod.fit()
 print(model_fit.summary())
 
-ARIMAmodel = ARIMA(df, order = (2, 2, 2))
+ARIMAmodel = ARIMA(train, order = (2, 2, 2))
 ARIMAmodel = ARIMAmodel.fit()
 
 y_pred = ARIMAmodel.get_forecast(len(test.index))
@@ -66,7 +80,7 @@ y_pred_df = y_pred.conf_int(alpha = 0.05)
 y_pred_df["Predictions"] = ARIMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
 y_pred_df.index = test.index
 y_pred_out = y_pred_df["Predictions"] 
-plt.plot(y_pred_out, color='Yellow', label = 'ARIMA Predictions')
+plt.plot(y_pred_out, color='Yellow', label = 'Predictions')
 plt.legend()
 
 
