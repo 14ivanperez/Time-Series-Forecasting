@@ -10,17 +10,14 @@ import numpy as np
 
 data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2022'))
 df = data['Close']
-df.sort_index(inplace=True)
-plt.ylabel('iShares 20+')
-plt.xlabel('Date')
-df.plot()
-plt.show()
 
+#graph data wiht monthly mean
+df.sort_index(inplace=True)
 import warnings
 fig, ax = plt.subplots(figsize=(20, 6))
 ax.plot(df,marker='.', linestyle='-', linewidth=0.5, label='Daily')
 ax.plot(df.resample('1m').mean(),marker='o', markersize=8, linestyle='-', label='Monthly Mean Resample')
-ax.set_ylabel('Prices')
+ax.set_ylabel('iShares 20+ Prices')
 ax.legend()
 plt.show()
 
