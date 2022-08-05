@@ -51,8 +51,8 @@ plt.xlabel('Shares 20+ Year Treasury Bond')
 plt.show()
 
 # Create Training and Tests
-train = df[df.index < pd.to_datetime("2020-11-01", format='%Y-%m-%d')]
-test = df[df.index > pd.to_datetime("2020-11-01", format='%Y-%m-%d')]
+train = df[df.index < pd.to_datetime("2018-01-01", format='%Y-%m-%d')]
+test = df[df.index >= pd.to_datetime("2018-01-01", format='%Y-%m-%d')]
 
 plt.plot(train, color = "black")
 plt.plot(test, color = "red")
@@ -64,10 +64,6 @@ plt.show()
 
 
 #Build Arima for train data
-mod = sm.tsa.arima.ARIMA(train, order=(1, 1, 2))
-model_fit = mod.fit()
-print(model_fit.summary())
-
 import itertools
 warnings.filterwarnings("ignore")
 plt.style.use('fivethirtyeight')
@@ -81,7 +77,7 @@ print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
 #Produce Arima model
-mod = sm.tsa.statespace.SARIMAX(df,
+mod = sm.tsa.statespace.SARIMAX(train,
                                 order=(1, 1, 1),
                                 seasonal_order=(1, 1, 0, 12),
                                 enforce_stationarity=False,
@@ -92,22 +88,44 @@ print(results.summary().tables[1])
 results.plot_diagnostics(figsize=(16,6))
 plt.show()
 
-
-arma_rmse = np.sqrt(mean_squared_error(test["BTC-USD"].values, y_pred_df["Predictions"]))
-print("RMSE: ",arma_rmse)
-
-# Make as pandas series
-fc_series = pd.Series(fc, index=test.index)
-lower_series = pd.Series(conf[:, 0], index=test.index)
-upper_series = pd.Series(conf[:, 1], index=test.index)
-
-# Graph Plot
-plt.figure(figsize=(12,5), dpi=100)
-plt.plot(train, label='training')
-plt.plot(test, label='actual')
-plt.plot(fc_series, label='forecast')
-plt.fill_between(lower_series.index, lower_series, upper_series, 
-                 color='k', alpha=.15)
-plt.title('Forecast vs Actuals')
-plt.legend(loc='upper left', fontsize=8)
+#Predict using Arima
+pred = results.get_prediction(start=pd.to_datetime('2018-01-01'), dynamic=False)
+pred_ci = pred.conf_int()
+ax = df['2012':].plot(label='observed')
+pred.predicted_mean.plot(ax=ax, color = 'red', label='One-step ahead Forecast', alpha=.7, figsize=(14, 7))
+ax.fill_between(pred_ci.index,
+                pred_ci.iloc[:, 0],
+                pred_ci.iloc[:, 1], color='k', alpha=.2)
+ax.set_xlabel('Date')
+ax.set_ylabel('iShares 20+ Year Treasury Bond')
+plt.legend()
 plt.show()
+
+#---------------------
+
+plt.plot(train, color = "black", label = 'Training')
+plt.plot(test, color = "red", label = 'Testing')
+plt.ylabel('iShares Price')
+plt.xlabel('Date')
+plt.xticks(rotation=45)
+plt.title("Train/Test split for iShares Data")
+
+y = train
+ARIMAmodel = ARIMA(y, order = (5, 4, 2))
+ARIMAmodel = ARIMAmodel.fit()
+
+y_pred = ARIMAmodel.get_forecast(len(test.index))
+y_pred_df = y_pred.conf_int(alpha = 0.05) 
+y_pred_df["Predictions"] = ARIMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
+y_pred_df.index = test.index
+y_pred_out = y_pred_df["Predictions"] 
+plt.plot(y_pred_out, color='Yellow', label = 'ARIMA Predictions')
+plt.legend()
+plt.show()
+
+
+#Calculate Square error forectast
+import numpy as np
+from sklearn.metrics import mean_squared_error
+arma_rmse = np.sqrt(mean_squared_error(test["BTC-USD"].values, y_pred_df["Predictions"]))
+print("ARMA RMSE: ",arma_rmse)
