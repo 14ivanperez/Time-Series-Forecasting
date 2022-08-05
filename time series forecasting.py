@@ -26,21 +26,6 @@ ax.set_ylabel('iShares 20+ Prices')
 ax.legend()
 plt.show()
 
-#see decomposition
-from pylab import rcParams
-rcParams['figure.figsize'] = 18, 8
-decomposition = sm.tsa.seasonal_decompose(df, model='additive')
-fig = decomposition.plot()
-plt.show()
-
-df.index = pd.to_datetime(df.index)
-df = df.set_index('Date').asfreq('D')
-result = seasonal_decompose(topsoil, model='ad')
-
-from pylab import rcParams
-rcParams['figure.figsize'] = 12,5
-result.plot();
-
 #test non-stationarity
 from statsmodels.tsa.stattools import adfuller
 from numpy import log
@@ -51,6 +36,16 @@ print('p-value: %f' % result[1])
 #Auto Correlation functions
 sm.graphics.tsa.plot_acf(df.values.squeeze(), lags=100)
 sm.graphics.tsa.plot_pacf(df.values.squeeze(), lags=100)
+plt.show()
+
+#decomposition after selecting frequency and filling missing values
+df.sort_index(inplace=True)
+df = df.asfreq('d')
+df = df.fillna(method='bfill').fillna(method='ffill')
+df.sort_index(inplace=True)
+rcParams['figure.figsize'] = 18, 8
+decomposition = sm.tsa.seasonal_decompose(df, model = 'additive')
+fig = decomposition.plot()
 plt.show()
 
 # Create Training and Tests
@@ -64,6 +59,7 @@ plt.xlabel('Date')
 plt.xticks(rotation=45)
 plt.title("Train/Test graph)
 plt.show()
+
 
 #Build Arima for train data
 df.index = pd.DatetimeIndex(df.index).to_period('D')
