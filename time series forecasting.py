@@ -41,36 +41,6 @@ print(model_fit.summary())
 plot_predict(model_fit, dynamic=False)
 plt.show()
 
-from statsmodels.tsa.stattools import acf
-
-def forecast(model,predict_steps,df):
-    
-    pred_uc = model.get_forecast(steps=predict_steps)
-
-    #SARIMAXResults.conf_int, can change alpha,the default alpha = .05 returns a 95% confidence interval.
-    pred_ci = pred_uc.conf_int()
-
-    ax = df.plot(label='observed', figsize=(14, 7))
-#     print(pred_uc.predicted_mean)
-    pred_uc.predicted_mean.plot(ax=ax, label='Forecast')
-    ax.fill_between(pred_ci.index,
-                    pred_ci.iloc[:, 0],
-                    pred_ci.iloc[:, 1], color='k', alpha=.25)
-    ax.set_xlabel('Date')
-
-    plt.legend()
-    plt.show()
-    
-       # Produce the forcasted tables 
-    pm = pred_uc.predicted_mean.reset_index()
-    pm.columns = ['Date','Predicted_Mean']
-    pci = pred_ci.reset_index()
-    pci.columns = ['Date','Lower Bound','Upper Bound']
-    final_table = pm.join(pci.set_index('Date'), on='Date')
-    
-    return (final_table)
-    
-
 # Create Training and Tests
 train = df.iloc[:1421]
 train
@@ -82,7 +52,7 @@ test
 model = sm.tsa.arima.ARIMA(train, order=(1, 1, 1))  
 fitted = model.fit()  
 
-# Forecast
+# Forecast data
 fc = fitted.forecast(15, alpha=0.05)  # 95% conf
 
 # Make as pandas series
@@ -90,7 +60,7 @@ fc_series = pd.Series(fc, index=test.index)
 lower_series = pd.Series(conf[:, 0], index=test.index)
 upper_series = pd.Series(conf[:, 1], index=test.index)
 
-# Plot
+# Graph Plot
 plt.figure(figsize=(12,5), dpi=100)
 plt.plot(train, label='training')
 plt.plot(test, label='actual')
