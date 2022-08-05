@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import statsmodels
+import seaborn as sns
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 import numpy as np
 
@@ -29,10 +30,12 @@ result = adfuller(df.dropna())
 print('ADF Statistic: %f' % result[0])
 print('p-value: %f' % result[1])
 
+#Auto Correlation functions
 sm.graphics.tsa.plot_acf(df.values.squeeze(), lags=100)
 sm.graphics.tsa.plot_pacf(df.values.squeeze(), lags=100)
 plt.show()
 
+#Build Arima
 mod = sm.tsa.arima.ARIMA(df, order=(1, 1, 2))
 model_fit = mod.fit()
 print(model_fit.summary())
@@ -41,12 +44,19 @@ plot_predict(model_fit, dynamic=False)
 plt.show()
 
 # Create Training and Tests
-train = df.iloc[:1421]
-train
-test = df.iloc[1421:]
-test
 
-# Build Model with specific parameters
+train = df[df.index < pd.to_datetime("2020-01-01", format='%Y-%m-%d')]
+test = df[df.index > pd.to_datetime("2020-01-01", format='%Y-%m-%d')]
+
+plt.plot(train, color = "black")
+plt.plot(test, color = "red")
+plt.ylabel('iShares 20+')
+plt.xlabel('Date')
+plt.xticks(rotation=45)
+plt.title("Train/Test graph)
+plt.show()
+
+# Build Model with specific parametersg
 # model = ARIMA(train, order=(3,2,1))  
 model = sm.tsa.arima.ARIMA(train, order=(1, 1, 1))  
 fitted = model.fit()  
