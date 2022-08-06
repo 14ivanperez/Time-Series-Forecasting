@@ -59,7 +59,7 @@ plt.plot(test, color = "red")
 plt.ylabel('iShares 20+')
 plt.xlabel('Date')
 plt.xticks(rotation=45)
-plt.title("Train/Test graph)
+plt.title("Train/Test graph")
 plt.show()
 
 
@@ -75,6 +75,29 @@ print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
 print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+
+#evaluate automatically which arima model is the best
+data = df.set_index('Day')
+train = df.iloc[:int(.8*(df.shape[0])),:]
+auto_model = auto_arima(
+  train,
+  start_P=1,
+  start_q=1,
+  max_p=6,
+  max_q=6,m=12,
+  seasonal=True,
+  max_P=2, 
+  max_D=2,
+  max_Q=2,
+  max_d=2,
+  trace=True,
+  error_action='ignore',
+  suppress_warnings=True,
+  stepwise=True,
+  information_criterion="aic",
+  alpha=0.05,
+  scoring='mse'
+)
 
 #Produce Arima model
 mod = sm.tsa.statespace.SARIMAX(train,
@@ -98,28 +121,6 @@ ax.fill_between(pred_ci.index,
                 pred_ci.iloc[:, 1], color='k', alpha=.2)
 ax.set_xlabel('Date')
 ax.set_ylabel('iShares 20+ Year Treasury Bond')
-plt.legend()
-plt.show()
-
-#---------------------
-
-plt.plot(train, color = "black", label = 'Training')
-plt.plot(test, color = "red", label = 'Testing')
-plt.ylabel('iShares Price')
-plt.xlabel('Date')
-plt.xticks(rotation=45)
-plt.title("Train/Test split for iShares Data")
-
-y = train
-ARIMAmodel = ARIMA(y, order = (5, 4, 2))
-ARIMAmodel = ARIMAmodel.fit()
-
-y_pred = ARIMAmodel.get_forecast(len(test.index))
-y_pred_df = y_pred.conf_int(alpha = 0.05) 
-y_pred_df["Predictions"] = ARIMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
-y_pred_df.index = test.index
-y_pred_out = y_pred_df["Predictions"] 
-plt.plot(y_pred_out, color='Yellow', label = 'ARIMA Predictions')
 plt.legend()
 plt.show()
 
