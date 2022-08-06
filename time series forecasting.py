@@ -11,7 +11,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.arima.model import ARIMA
 import numpy as np
 
-data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2022'))
+data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2021'))
 df = data['Close']
 
 #Data is already well formatted
@@ -99,12 +99,8 @@ auto_model = auto_arima(
   scoring='mse'
 )
 
-#Produce Arima model
-mod = sm.tsa.statespace.SARIMAX(train,
-                                order=(1, 1, 1),
-                                seasonal_order=(1, 1, 0, 12),
-                                enforce_stationarity=False,
-                                enforce_invertibility=False)
+#Produce Arima model 0,1,1
+mod = ARIMA(df, order = (0, 1, 1))
 results = mod.fit()
 print(results.summary().tables[1])
 
