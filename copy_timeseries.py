@@ -9,10 +9,25 @@ import statsmodels
 import seaborn as sns
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 import numpy as np
 
-data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2021'))
+data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2013', to_date='01/01/2022'))
 df = data['Close']
+
+import pandas_datareader as web 
+import datetime
+
+ieo = web.get_data_yahoo(['IEO'], start=datetime.datetime(2013, 1, 1), end=datetime.datetime(2022, 1, 1))['Close']
+
+print(ieo.head())
+
+df.to_csv("df.csv")
+df = pd.read_csv("df.csv")
+print(df.head())
+
+df.index = pd.to_datetime(df['Date'], format='%Y-%m-%d')
+del df['Date']
 
 #Data is already well formatted
 df.index
@@ -63,18 +78,10 @@ plt.title("Train/Test graph")
 plt.show()
 
 
-#Build Arima for train data
-import itertools
-warnings.filterwarnings("ignore")
-plt.style.use('fivethirtyeight')
-p = d = q = range(0, 2)
-pdq = list(itertools.product(p, d, q))
-seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
-print('Examples of parameter combinations for Seasonal ARIMA...')
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+from pmdarima import auto_arima
+import warnings
+
+warnings.filterwarnings('ignore')
 
 #evaluate automatically which arima model is the best
 data = df.set_index('Day')
@@ -99,25 +106,30 @@ auto_model = auto_arima(
   scoring='mse'
 )
 
-#Produce Arima model 0,1,1
-mod = ARIMA(df, order = (0, 1, 1))
-results = mod.fit()
-print(results.summary().tables[1])
 
-results.plot_diagnostics(figsize=(16,6))
+ARIMAmodel = ARIMA(df, order = (0, 1, 1))
+model = ARIMAmodel.fit()
+print(model.summary())
+
+model.plot_diagnostics(figsize=(16,6))
 plt.show()
 
-#Predict using Arima
-pred = results.get_prediction(start=pd.to_datetime('2018-01-01'), dynamic=False)
-pred_ci = pred.conf_int()
-ax = df['2012':].plot(label='observed')
-pred.predicted_mean.plot(ax=ax, color = 'red', label='One-step ahead Forecast', alpha=.7, figsize=(14, 7))
-ax.fill_between(pred_ci.index,
-                pred_ci.iloc[:, 0],
-                pred_ci.iloc[:, 1], color='k', alpha=.2)
-ax.set_xlabel('Date')
-ax.set_ylabel('iShares 20+ Year Treasury Bond')
-plt.legend()
+from statsmodels.graphics.tsaplots import plot_predict
+plot_predict(model)
+plt.show()
+
+#---------------------
+plt.plot(train, color = "black", label = 'Training')
+plt.plot(test, color = "red", label = 'Testing')
+plt.ylabel('BTC Price')
+plt.xlabel('Date')
+plt.xticks(rotation=45)
+plt.title("Train/Test split")
 plt.show()
 
 
+#Calculate Square error forectast
+import numpy as np
+from sklearn.metrics import mean_squared_error
+arma_rmse = np.sqrt(mean_squared_error(test["BTC-USD"].values, y_pred_df["Predictions"]))
+print("ARMA RMSE: ",arma_rmse)
