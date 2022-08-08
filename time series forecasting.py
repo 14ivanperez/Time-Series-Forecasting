@@ -47,7 +47,7 @@ df.sort_index(inplace=True)
 rcParams['figure.figsize'] = 16, 6
 decomposition = sm.tsa.seasonal_decompose(df, model = 'additive')
 fig = decomposition.plot()
-plt.xlabel('Shares 20+ Year Treasury Bond')
+plt.xlabel('iShares 20+ Year Treasury Bond')
 plt.show()
 
 #Create Training and Tests
@@ -56,7 +56,7 @@ test = df[df.index >= pd.to_datetime("2018-01-01", format='%Y-%m-%d')]
 
 plt.plot(train, color = "black")
 plt.plot(test, color = "red")
-plt.ylabel('iShares 20+')
+plt.ylabel('iShares 20+ Treasury Bond ETF')
 plt.xlabel('Date')
 plt.xticks(rotation=45)
 plt.title("Train/Test graph")
@@ -70,11 +70,11 @@ plt.style.use('fivethirtyeight')
 p = d = q = range(0, 2)
 pdq = list(itertools.product(p, d, q))
 seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
-print('Examples of parameter combinations for Seasonal ARIMA...')
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+print('Examples of parameter combinations for ARIMA...')
+print('ARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
+print('ARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
+print('ARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
+print('ARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
 #Evaluate automatically which arima parameters are the best fitted
 data = df.set_index('Day')
