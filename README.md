@@ -1,9 +1,9 @@
-# Portfolio Weighting and Optimization
+# TIME SERIES FORECASTING
 
 
 ## Introduction
 
-I first construct an equally weighted portfolio with the 10 highest market cap S&P500 companies in 2022. Next, I calculate its performance, risk, and correlation on a heat map. I finally made an optimization to reduce its volatility using CAPM
+I used data of an ETF to to build a model to predict its futures prices. Used ADF tests, decomposition, search for best parameters, ARIMA
 
 ## Required libraries
 
@@ -46,4 +46,4 @@ df = data['Close']
 ## Build ARIMA
 
 ## Forecast prices
-<img src="images/real vs forecast">
+<img src="images/real vs forecast.png">
