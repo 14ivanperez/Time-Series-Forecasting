@@ -50,7 +50,7 @@ fig = decomposition.plot()
 plt.xlabel('Shares 20+ Year Treasury Bond')
 plt.show()
 
-# Create Training and Tests
+#Create Training and Tests
 train = df[df.index < pd.to_datetime("2018-01-01", format='%Y-%m-%d')]
 test = df[df.index >= pd.to_datetime("2018-01-01", format='%Y-%m-%d')]
 
@@ -63,7 +63,7 @@ plt.title("Train/Test graph")
 plt.show()
 
 
-#Build Arima for train data
+#Build Arima to train data
 import itertools
 warnings.filterwarnings("ignore")
 plt.style.use('fivethirtyeight')
@@ -76,7 +76,7 @@ print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
-#evaluate automatically which arima model is the best
+#Evaluate automatically which arima parameters are the best fitted
 data = df.set_index('Day')
 train = df.iloc[:int(.8*(df.shape[0])),:]
 auto_model = auto_arima(
@@ -107,7 +107,7 @@ print(results.summary().tables[1])
 results.plot_diagnostics(figsize=(16,6))
 plt.show()
 
-#Predict using Arima
+#Forecast ETF using Arima
 pred = results.get_prediction(start=pd.to_datetime('2018-01-01'), dynamic=False)
 pred_ci = pred.conf_int()
 ax = df['2012':].plot(label='observed')
