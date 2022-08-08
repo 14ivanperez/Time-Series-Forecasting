@@ -99,7 +99,7 @@ auto_model = auto_arima(
   scoring='mse'
 )
 
-#Produce Arima model 0,1,1
+#Produce Arima model 0,1,1 (best parameters)
 mod = ARIMA(df, order = (0, 1, 1))
 results = mod.fit()
 print(results.summary().tables[1])
