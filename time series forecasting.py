@@ -23,7 +23,7 @@ import warnings
 fig, ax = plt.subplots(figsize=(20, 6))
 ax.plot(df,marker='.', linestyle='-', linewidth=0.5, label='Daily')
 ax.plot(df.resample('1m').mean(),marker='o', markersize=8, linestyle='-', label='Monthly Mean Resample')
-ax.set_ylabel('iShares 20+ Prices')
+ax.set_ylabel('iShares 20+ ETF Prices')
 ax.legend()
 plt.show()
 
@@ -71,10 +71,10 @@ p = d = q = range(0, 2)
 pdq = list(itertools.product(p, d, q))
 seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
 print('Examples of parameter combinations for ARIMA...')
-print('ARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('ARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('ARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('ARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+print('ARIMA: {} x {}'.format(pdq[1], seasonal_pdq[1]))
+print('ARIMA: {} x {}'.format(pdq[1], seasonal_pdq[2]))
+print('ARIMA: {} x {}'.format(pdq[2], seasonal_pdq[3]))
+print('ARIMA: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
 #Evaluate automatically which arima parameters are the best fitted
 data = df.set_index('Day')
@@ -116,7 +116,7 @@ ax.fill_between(pred_ci.index,
                 pred_ci.iloc[:, 0],
                 pred_ci.iloc[:, 1], color='k', alpha=.2)
 ax.set_xlabel('Date')
-ax.set_ylabel('iShares 20+ Year Treasury Bond')
+ax.set_ylabel('iShares 20+ Year Treasury Bond ETF')
 plt.legend()
 plt.show()
 
