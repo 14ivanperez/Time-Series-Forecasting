@@ -21,7 +21,7 @@ from statsmodels.tsa.arima.model import ARIMA
 import numpy as np
 ````
 
-##Load data set
+## Load data set
 ```` markdown
 data = pd.DataFrame(investpy.get_etf_historical_data(etf='iShares 20+ Year Treasury Bond', country='united states', from_date='01/01/2012', to_date='01/01/2021'))
 df = data['Close']
