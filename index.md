@@ -1,33 +1,23 @@
 ## INDEX OF THE PROJECT
 ---
  
-### a)Graph the series for sales. Does it appear to be stationary, trend stationary or stochastic?
-<img src="Images/Series graph.png">
+### a)Load iShares 20+ Year Treasury Bond ETF data and graph a resample mean
 
-### b)Test for the presence of a unit root with Dickey–Fuller (ADF) test.
-<img src="Images/dickey fuller.png">
+### b)Test for stationarity with Dickey–Fuller (ADF) test
 
-### c)Autocorrelation function
-<img src="Images/ACF & PACF.png">
+### c)Autocorrelation functions
 
-### d)Estimate the model
-<img src="Images/ARMA1 estimation.png">
+### d)decomposition of data
 
-### e) & f)Assess your model using an information criterion
-<img src="Images/BIC test.png">
+### e) Create Training and Tests
 
-### g)Generate forecasts for the next 57 observations, and plot forecasted and actual observations. 
-<img src="Images/comparison forecast and annual.png">
+### f)Build Arima to train data
 
-### h) A VAR model
-<img src="Images/VAR.png">
+### g)Evaluate automatically which arima parameters are the best fitted
 
-### i) Granger cause
-<img src="Images/Granger.png">
+### h)Produce Arima model 0,1,1 (best parameters)
 
-### j)Set of Impulse Response Functions
-<img src="Images/Impulse Response Functions.png">
+### i)Forecast ETF using Arima
 
-### k)Generate a forecast of sales from the VAR and compare it to the previous univariate forecast.
-<img src="Images/forecast VAR AR.png">
+
 
