@@ -7,9 +7,9 @@
 
 ### c)Autocorrelation functions
 
-### d)decomposition of data
+### d)Decomposition of data
 
-### e) Create Training and Tests
+### e)Create Training and Tests
 
 ### f)Build Arima to train data
 
