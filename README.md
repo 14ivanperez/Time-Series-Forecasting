@@ -3,7 +3,7 @@
 
 ## Introduction
 
-In this work, I have built a model to predict its futures prices. Used ADF tests, decomposition, search for best parameters, ARIMA
+In this work, I have built a model to predict Shares 20+ Year Treasury Bond ETF prices. Used ADF tests, decomposition, search for best parameters, and ARIMA.
 
 ## Required libraries
 
