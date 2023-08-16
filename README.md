@@ -3,7 +3,7 @@
 
 ## Introduction
 
-I used data of an ETF to to build a model to predict its futures prices. Used ADF tests, decomposition, search for best parameters, ARIMA
+In this work, I have built a model to predict its futures prices. Used ADF tests, decomposition, search for best parameters, ARIMA
 
 ## Required libraries
 
